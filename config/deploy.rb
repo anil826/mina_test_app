@@ -13,7 +13,7 @@ require 'yaml'
 #   branch       - Branch name to deploy. (needed by mina/git)
 
 set :domain, '192.168.1.7'
-set :deploy_to, '/var/www/blog.com'
+set :deploy_to, '/var/www/blog'
 set :repository, 'https://github.com/anil826/mina_test_app'
 set :branch, 'master'
 set :rails_env, :staging
