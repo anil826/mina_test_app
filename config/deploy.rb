@@ -11,7 +11,7 @@ require 'yaml'
 #   deploy_to    - Path to deploy into.
 #   repository   - Git repo to clone from. (needed by mina/git)
 #   branch       - Branch name to deploy. (needed by mina/git)
-set :user, 'anil'    # Username in the server to SSH to.
+set :user, 'anil' # Username in the server to SSH to.
 set :application, 'Blog'
 set :domain, '192.168.1.7'
 set :deploy_to, "/home/#{user}/#{application}"
@@ -37,11 +37,12 @@ task :environment do
   # invoke :'rbenv:load'
 
   # For those using RVM, use this to load an RVM version@gemset.
-  # invoke :'rvm:use[ruby-1.9.3-p125@default]'
+
   set :rails_env, ENV['on'].to_sym unless ENV['on'].nil?
   # For those using RVM, use this to load an RVM version@gemset.
   require "#{File.join(__dir__, 'deploy', "#{rails_env}_configuration_files", 'settings')}"
-  invoke :"rvm:use[ruby-#{ruby_version}@#{gemset}]"
+  # invoke :"rvm:use[ruby-#{ruby_version}@#{gemset}]"
+  invoke :'rvm:use[ ruby-2.2.0@default]'
 end
 
 # DON't RUN THIS TASK, IT WILL RUN FROM SETUP
@@ -59,7 +60,7 @@ task :setup_prerequesties => :environment do
   queue! %[sudo -A rm -f /etc/nginx/sites-enabled/default]
 
   #set unicorn settings
-  queue! %[echo "#{erb(File.join(__dir__, 'deploy', 'common_template', 'unicorn.erb'))}" > #{File.join(deploy_to, shared_paths, '/config/unicorn.rb')}]
+  queue! %[echo "#{erb(File.join(__dir__, 'deploy', 'common_template', 'unicorn.erb'))}" > #{File.join(deploy_to, shared_path, '/config/unicorn.rb')}]
 
   #setup unicorn
   queue! %[echo '#{erb(File.join(__dir__, 'deploy', 'common_template', 'unicorn_init.erb'))}' > /tmp/unicorn_#{application}]
