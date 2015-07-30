@@ -1,4 +1,5 @@
 == README
 
 This is my last chapter of RubyonRails.org/book
+And Testing for deployment using mina as dummmy app on local machine.
 
