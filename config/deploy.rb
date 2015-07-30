@@ -3,7 +3,7 @@ require 'mina/rails'
 require 'mina/git'
 
 # require 'mina/rbenv'  # for rbenv support. (http://rbenv.org)
-require 'mina/rvm'    # for rvm support. (http://rvm.io)
+require 'mina/rvm' # for rvm support. (http://rvm.io)
 require 'yaml'
 
 # Basic settings:
@@ -11,12 +11,13 @@ require 'yaml'
 #   deploy_to    - Path to deploy into.
 #   repository   - Git repo to clone from. (needed by mina/git)
 #   branch       - Branch name to deploy. (needed by mina/git)
-
+set :user, 'anil'    # Username in the server to SSH to.
+set :application, 'Blog'
 set :domain, '192.168.1.7'
-set :deploy_to, '/home/deploy/turnip'
+set :deploy_to, "/home/#{user}/#{application}"
 set :repository, 'https://github.com/anil826/mina_test_app'
 set :branch, 'master'
-set :rails_env, :staging
+set :rails_env, :production
 # For system-wide RVM install.
 #   set :rvm_path, '/usr/local/rvm/bin/rvm'
 
@@ -25,7 +26,6 @@ set :rails_env, :staging
 set :shared_paths, ['config/database.yml', 'config/secrets.yml', 'log']
 
 # Optional settings:
-#   set :user, 'foobar'    # Username in the server to SSH to.
 #   set :port, '30000'     # SSH port number.
 #   set :forward_agent, true     # SSH forward_agent.
 
@@ -59,7 +59,7 @@ task :setup_prerequesties => :environment do
   queue! %[sudo -A rm -f /etc/nginx/sites-enabled/default]
 
   #set unicorn settings
-  queue! %[echo "#{erb(File.join(__dir__, 'deploy', 'common_template', 'unicorn.erb'))}" > #{File.join(deploy_to, shared_path, '/config/unicorn.rb')}]
+  queue! %[echo "#{erb(File.join(__dir__, 'deploy', 'common_template', 'unicorn.erb'))}" > #{File.join(deploy_to, shared_paths, '/config/unicorn.rb')}]
 
   #setup unicorn
   queue! %[echo '#{erb(File.join(__dir__, 'deploy', 'common_template', 'unicorn_init.erb'))}' > /tmp/unicorn_#{application}]
@@ -74,6 +74,7 @@ end
 # For Rails apps, we'll make some of the shared paths that are shared between
 # all releases.
 task :setup => :environment do
+  invoke :set_sudo_password
   queue! %[mkdir -p "#{deploy_to}/#{shared_path}/log"]
   queue! %[chmod g+rx,u+rwx "#{deploy_to}/#{shared_path}/log"]
 
@@ -82,7 +83,7 @@ task :setup => :environment do
 
   queue! %[touch "#{deploy_to}/#{shared_path}/config/database.yml"]
   queue! %[touch "#{deploy_to}/#{shared_path}/config/secrets.yml"]
-  queue  %[echo "-----> Be sure to edit '#{deploy_to}/#{shared_path}/config/database.yml' and 'secrets.yml'."]
+  queue %[echo "-----> Be sure to edit '#{deploy_to}/#{shared_path}/config/database.yml' and 'secrets.yml'."]
   invoke :setup_prerequesties
 
   # queue %[
@@ -125,7 +126,7 @@ task :deploy => :environment do
     invoke :'rails:db_migrate'
     invoke :'rails:assets_precompile'
 
-    invoke :install_cron
+    # invoke :install_cron
     #to :launch do
     #end
   end

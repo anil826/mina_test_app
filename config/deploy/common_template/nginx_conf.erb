@@ -10,7 +10,7 @@ server unix:/tmp/unicorn.<%= application %>.sock fail_timeout=0;
     ssl_certificate <%= cert_path %>;
     ssl_certificate_key <%= cert_key_path %>;
 
-    root <%=deploy_to%>/current/public;
+    root <%=deploy_to %>/current/public;
 
     location ^~ /assets/ {
     gzip_static on;
@@ -43,7 +43,7 @@ server unix:/tmp/unicorn.<%= application %>.sock fail_timeout=0;
 <% else %>
     server {
     listen 80 default deferred;
-    root <%=deploy_to%>/current/public;
+    root <%=deploy_to %>/current/public;
 
     location ^~ /assets/ {
     gzip_static on;

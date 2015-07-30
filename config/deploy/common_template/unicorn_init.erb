@@ -3,11 +3,11 @@ set -e
 
 # Feel free to change any of the following variables for your app:
 TIMEOUT=${TIMEOUT-60}
-APP_ROOT=<%= File.join(deploy_to,current_path) %>
-PID_DIR=<%= File.join(deploy_to,shared_path, 'pids') %>
+APP_ROOT=<%= File.join(deploy_to, current_path) %>
+PID_DIR=<%= File.join(deploy_to, shared_path, 'pids') %>
 PID=$PID_DIR/unicorn.pid
 CMD="cd $APP_ROOT;  bundle exec unicorn -D -c <%= "#{File.join(deploy_to, shared_path)}/config/unicorn.rb" %> -E <%= rails_env.to_s %>"
-AS_USER=deploy
+AS_USER=<%= user %>
 set -u
 
 OLD_PIN="$PID.oldbin"

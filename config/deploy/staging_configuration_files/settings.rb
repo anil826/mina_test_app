@@ -2,7 +2,7 @@ set :branch, ENV['BRANCH'] || 'master'
 
 set :domain, ENV['DOMAIN'] || '192.168.1.7'
 
-set :user, 'deploy'
+set :user, 'anil'
 
 set :unicorn_worker_count, 4
 
