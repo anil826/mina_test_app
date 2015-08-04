@@ -18,6 +18,8 @@ set :deploy_to, "/home/#{user}/#{application}"
 set :repository, 'https://github.com/anil826/mina_test_app'
 set :branch, 'master'
 set :rails_env, :production
+set :ruby_version, "#{File.readlines(File.join(__dir__, '..', '.ruby-version')).first.strip}"
+set :gemset, "#{File.readlines(File.join(__dir__, '..', '.ruby-gemset')).first.strip}"
 # For system-wide RVM install.
 #   set :rvm_path, '/usr/local/rvm/bin/rvm'
 
@@ -41,8 +43,8 @@ task :environment do
   set :rails_env, ENV['on'].to_sym unless ENV['on'].nil?
   # For those using RVM, use this to load an RVM version@gemset.
   require "#{File.join(__dir__, 'deploy', "#{rails_env}_configuration_files", 'settings')}"
-  # invoke :"rvm:use[ruby-#{ruby_version}@#{gemset}]"
-  invoke :'rvm:use[ ruby-2.2.0@default]'
+  invoke :"rvm:use[ruby-#{ruby_version}@#{gemset}]"
+  # invoke :'rvm:use[ ruby-2.2.0@default]'
 end
 
 # DON't RUN THIS TASK, IT WILL RUN FROM SETUP
@@ -71,6 +73,11 @@ task :setup_prerequesties => :environment do
   queue! %[sudo -A service nginx restart]
 end
 
+task :setup_yml => :environment do
+  Dir[File.join(__dir__, 'deploy', "#{rails_env.to_s}_configuration_files", '*.erb')].each do |_path|
+    queue! %[echo "#{erb _path}" > "#{File.join(deploy_to, 'shared/config', File.basename(_path, '.erb') +'.yml')}"] unless ['sudo_password'].include?(File.basename(_path, '.erb'))
+  end
+end
 # Put any custom mkdir's in here for when `mina setup` is ran.
 # For Rails apps, we'll make some of the shared paths that are shared between
 # all releases.
@@ -81,6 +88,9 @@ task :setup => :environment do
 
   queue! %[mkdir -p "#{deploy_to}/#{shared_path}/config"]
   queue! %[chmod g+rx,u+rwx "#{deploy_to}/#{shared_path}/config"]
+
+  queue! %[mkdir -p "#{deploy_to}/#{shared_path}/pids"]
+  queue! %[chmod g+rx,u+rwx "#{deploy_to}/#{shared_path}/pids"]
 
   queue! %[touch "#{deploy_to}/#{shared_path}/config/database.yml"]
   queue! %[touch "#{deploy_to}/#{shared_path}/config/secrets.yml"]

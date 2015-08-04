@@ -1,6 +1,6 @@
 set :branch, ENV['BRANCH'] || 'master'
 
-set :domain, ENV['DOMAIN'] || '192.168.1.7'
+set :domain, ENV['DOMAIN'] || '192.168.1.4'
 
 set :user, 'anil'
 
