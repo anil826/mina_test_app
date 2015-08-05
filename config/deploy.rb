@@ -13,7 +13,7 @@ require 'yaml'
 #   branch       - Branch name to deploy. (needed by mina/git)
 set :user, 'anil' # Username in the server to SSH to.
 set :application, 'Blog'
-set :domain, '192.168.1.7'
+set :domain, '10.0.0.41'
 set :deploy_to, "/home/#{user}/#{application}"
 set :repository, 'https://github.com/anil826/mina_test_app'
 set :branch, 'master'
